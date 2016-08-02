@@ -1,0 +1,18 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+group = 'com.puke'
+version = '1.0.0'
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: repositories.mavenLocal().url)
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+}
