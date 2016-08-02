@@ -9,6 +9,7 @@ import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.TypeElement;
+import javax.tools.JavaCompiler;
 
 /**
  * @author zijiao
@@ -17,18 +18,23 @@ import javax.lang.model.element.TypeElement;
 @SupportedAnnotationTypes({
         "com.puke.PK"
 })
+@SupportedSourceVersion(SourceVersion.RELEASE_7)
 public class CustomProcessor extends AbstractProcessor {
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);
-        Util.println("执行初始化操作..");
+        Util.println("执行初始化asdasdad操作..");
     }
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+        Util.println("注解个数: " + annotations.size());
         for (TypeElement element : annotations) {
-            PK pk = element.getAnnotation(PK.class);
+            PK pk;
+            if (element == null || (pk = element.getAnnotation(PK.class)) == null) {
+                continue;
+            }
             Util.println("收到打印信息: " + pk.value());
         }
         return false;

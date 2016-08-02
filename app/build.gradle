@@ -26,5 +26,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.3.0'
     compile 'com.puke:debug:1.0.0@aar'
     compile project(':apttest')
-    apt 'com.puke:apttest:1.0.0@jar'
+//    compile 'com.puke:apttest:1.0.0@jar'
+//    apt 'com.puke:apttest:1.0.0@jar'
 }
