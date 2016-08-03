@@ -1,5 +1,7 @@
 package com.puke;
 
+import com.squareup.javapoet.JavaFile;
+
 import java.util.Set;
 
 import javax.annotation.processing.AbstractProcessor;
@@ -8,6 +10,8 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 import javax.tools.JavaCompiler;
 
@@ -29,10 +33,11 @@ public class CustomProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        Util.println("注解个数: " + annotations.size());
-        for (TypeElement element : annotations) {
+        for (Element element : roundEnv.getElementsAnnotatedWith(PK.class)) {
             PK pk;
-            if (element == null || (pk = element.getAnnotation(PK.class)) == null) {
+            if (element == null
+                    || (pk = element.getAnnotation(PK.class)) == null
+                    || element.getKind() == ElementKind.CLASS) {
                 continue;
             }
             Util.println("收到打印信息: " + pk.value());
