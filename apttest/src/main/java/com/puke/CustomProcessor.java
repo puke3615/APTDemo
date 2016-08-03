@@ -5,6 +5,8 @@ import com.squareup.javapoet.JavaFile;
 import java.util.Set;
 
 import javax.annotation.processing.AbstractProcessor;
+import javax.annotation.processing.Filer;
+import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
@@ -13,6 +15,7 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
+import javax.tools.Diagnostic;
 import javax.tools.JavaCompiler;
 
 /**
@@ -25,24 +28,43 @@ import javax.tools.JavaCompiler;
 @SupportedSourceVersion(SourceVersion.RELEASE_7)
 public class CustomProcessor extends AbstractProcessor {
 
+    private Messager messager;
+    private Filer filer;
+
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);
-        Util.println("执行初始化asdasdad操作..");
+        this.messager = processingEnv.getMessager();
+        this.filer = processingEnv.getFiler();
     }
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+        info("=======开始process了=======");
         for (Element element : roundEnv.getElementsAnnotatedWith(PK.class)) {
             PK pk;
             if (element == null
                     || (pk = element.getAnnotation(PK.class)) == null
-                    || element.getKind() == ElementKind.CLASS) {
+                    || element.getKind() != ElementKind.CLASS) {
                 continue;
             }
-            Util.println("收到打印信息: " + pk.value());
+
+            info("准备生成代码了");
+            String name = pk.value();
+            new GenerateHelper(filer, name).generate();
+
         }
+        info("=======结束process了=======");
         return false;
     }
+
+    private void info(String format, Object... args) {
+        messager.printMessage(Diagnostic.Kind.NOTE, String.format(format, args));
+    }
+
+    private void error(String format, Object... args) {
+        messager.printMessage(Diagnostic.Kind.ERROR, String.format(format, args));
+    }
+
 
 }
